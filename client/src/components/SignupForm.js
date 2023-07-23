@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
+import { Link } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { createUser } from '../utils/API';
+//import { createUser } from '../utils/API'; 
+import { ADD_USER } from '../utils/mutations'; 
+import { QUERY_ME } from '../utils/queries';
 import Auth from '../utils/auth';
 
 const SignupForm = () => {
@@ -10,12 +14,28 @@ const SignupForm = () => {
   // set state for form validation
   const [validated] = useState(false);
   // set state for alert
-  const [showAlert, setShowAlert] = useState(false);
+  const [showAlert, setShowAlert] = useState(false); 
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setUserFormData({ ...userFormData, [name]: value });
-  };
+  const [addUser, { error }] = useMutation(ADD_USER, {
+    update(cache, { data: { addUser } }) {
+      try {
+        const { me } = cache.readQuery({ query: QUERY_ME });
+        cache.writeQuery({
+          query: QUERY_ME,
+          data: { me: [addUser, ...me] }
+        });
+      } catch (e) {
+        console.error(e);
+      } 
+
+      // update me object's cache
+      const { me } = cache.readQuery({ query: QUERY_ME }); 
+      cache.writeQuery({
+        query: QUERY_ME,
+        data: { me: [addUser, ...me] }
+      });
+    }
+  });
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -28,26 +48,25 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await createUser(userFormData);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
+      const {data} = await addUser({
+        variables: {...userFormData}
+      });
+      console.log(data);
+      Auth.login(data.addUser.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
-
-    setUserFormData({
-      username: '',
-      email: '',
-      password: '',
-    });
   };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setUserFormData({...userFormData, [name]: value});
+
+      // if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
+    };
 
   return (
     <>
