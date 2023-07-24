@@ -14,8 +14,9 @@ import {SAVE_BOOK} from '../utils/mutations';
 import Auth from '../utils/auth'; 
 import { useParams } from 'react-router-dom';
 import { saveBook, searchGoogleBooks } from '../utils/API';
-import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
-import bookSchema from '../../../server/models/Book';
+import { saveBookIds, getSavedBookIds } from '../utils/localStorage'; 
+//import bookSchema from '../../../server/models/Book';
+
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -84,7 +85,7 @@ const SearchBooks = () => {
    
   //find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId); 
-        
+
     // get token
    const token = Auth.loggedIn() ? Auth.getToken() : null;
 
