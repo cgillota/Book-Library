@@ -7,12 +7,13 @@ import {
   Row,
   Col
 } from 'react-bootstrap'; 
+import {removeBookId} from '../utils/localStorage';
 import { REMOVE_BOOK } from '../utils/mutations'; 
-import { QUERY_ME } from '../utils/queries';
+import { GET_ME } from '../utils/queries';
 import Auth from '../utils/auth'; 
 
 const SavedBooks = () => {
-  const { loading, data } = useQuery(QUERY_ME);
+  const { loading, data } = useQuery(GET_ME);
   const [removeBook] = useMutation(REMOVE_BOOK);
   const userData = data?.me || {}; 
 
@@ -23,7 +24,7 @@ const SavedBooks = () => {
      return false;
    }
     try {
-      const {removeBookId}= await removeBook({
+      await removeBook({
         variables: {bookId}
       }); 
 
