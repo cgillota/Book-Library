@@ -30,7 +30,9 @@
 
   ## ScreenShots 
   ![Alt text](client/src/Assets/21-mern-homework-demo-01.gif) 
+  
   ![Alt text](client/src/Assets/21-mern-homework-demo-02.gif)
+  
   ![Alt text](client/src/Assets/21-mern-homework-demo-03.gif)
 
   ## Contributing
